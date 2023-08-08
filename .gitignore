@@ -15,3 +15,7 @@ build/*
 _site/
 *.css
 !petclinic.css
+
+# AppMap
+.appmap
+vendor
