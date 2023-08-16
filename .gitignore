@@ -15,3 +15,10 @@ build/*
 _site/
 *.css
 !petclinic.css
+
+# AppMap
+.appmap
+vendor
+
+# Ignore AppMap archives and working files
+/.appmap
