@@ -19,6 +19,7 @@ _site/
 # AppMap
 .appmap
 vendor
+tmp/appmap
 
 # Ignore AppMap archives and working files
 /.appmap
