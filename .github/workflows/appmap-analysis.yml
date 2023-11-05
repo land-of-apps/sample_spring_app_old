@@ -8,17 +8,11 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Set up JDK 17
         uses: actions/setup-java@v2
@@ -27,24 +21,22 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Install AppMap tools
-        id: install-appmap
-        uses: getappmap/install-action@v1
-        with:
-          project-type: maven
-      - name: Commit changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "ci: Add AppMap language agent and appmap.yml"
-
       - name: Maven Test
         run: ./mvnw test
-          
-      # Begin AppMap bootstrap archive step
-      - name: Archive AppMaps
-        id: appmap-bootstrap-archive-appmaps
-        uses: getappmap/archive-action@v1
+
+      - name: Save AppMaps
+        uses: actions/cache/save@v3
+        if: always()
         with:
-          revision: ${{ github.event.pull_request.base.sha }}
-      # End AppMap bootstrap archive step
-  
+          path: ${{ steps.install-appmap.outputs.appmap-dir }}
+          key: appmaps-${{ github.sha }}-${{ github.run_attempt }}
+          
+  appmap-analysis:
+    if: always()
+    needs: [test]
+    uses: getappmap/analyze-action/.github/workflows/appmap-analysis.yml@v1
+    permissions:
+      actions: read
+      contents: write
+      checks: write
+      pull-requests: write
