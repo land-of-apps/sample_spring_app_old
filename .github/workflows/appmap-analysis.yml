@@ -25,18 +25,18 @@ jobs:
         run: ./mvnw test
 
       - name: Save AppMaps
-        uses: actions/cache/save@v3
+        uses: actions/cache@v3
         if: always()
         with:
-          path: ${{ steps.install-appmap.outputs.appmap-dir }}
+          path: ./tmp/appmap
           key: appmaps-${{ github.sha }}-${{ github.run_attempt }}
-          
+
   appmap-analysis:
     if: always()
-    needs: [test]
+    needs: [ test ]
     uses: getappmap/analyze-action/.github/workflows/appmap-analysis.yml@v1
     permissions:
       actions: read
-      contents: write
+      contents: read
       checks: write
       pull-requests: write
