@@ -39,13 +39,6 @@ jobs:
 
       - name: Maven Test
         run: ./mvnw test
-
-      - name: Save AppMaps
-        uses: actions/cache/save@v3
-        if: always()
-        with:
-          path: ${{ steps.install-appmap.outputs.appmap-dir }}
-          key: appmaps-${{ github.sha }}-${{ github.run_attempt }}
           
       # Begin AppMap bootstrap archive step
       - name: Archive AppMaps
@@ -55,12 +48,3 @@ jobs:
           revision: ${{ github.event.pull_request.base.sha }}
       # End AppMap bootstrap archive step
   
-  appmap-analysis:
-    if: always()
-    needs: [test]
-    uses: getappmap/analyze-action/.github/workflows/appmap-analysis.yml@v1
-    permissions:
-      actions: read
-      contents: write
-      checks: write
-      pull-requests: write
