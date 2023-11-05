@@ -34,11 +34,17 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
+      # Begin AppMap CI language agent installation
       - name: Install AppMap tools
         id: install-appmap
         uses: getappmap/install-action@v1
         with:
-          project-type: maven 
+          project-type: maven
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: "ci: Add AppMap language agent and appmap.yml"
+      # End AppMap CI language agent installation
 
       - name: Maven Test
         run: ./mvnw test
