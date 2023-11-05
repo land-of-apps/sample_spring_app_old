@@ -23,3 +23,7 @@ tmp/appmap
 
 # Ignore AppMap archives and working files
 /.appmap
+
+
+# Node modules
+/node_modules
