@@ -9,14 +9,7 @@ on:
     - cron: '0 0 * * 0'
 
 permissions:
-  # Allows the EndBug/add-and-commit step to commit the package manager changes,
-  # adding the AppMap language library and configuration file appmap.yml.
-  # Once the EndBug/add-and-commit is removed, this permission can be removed, 
-  # unless you need it for other reasons.
   contents: write
-
-  # Allows the getappmap/archive-action to write a PR comment with the 
-  # AppMap configuration status.
   pull-requests: write
 
 jobs:
@@ -34,7 +27,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      # Begin AppMap CI language agent installation
       - name: Install AppMap tools
         id: install-appmap
         uses: getappmap/install-action@v1
@@ -44,7 +36,6 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           message: "ci: Add AppMap language agent and appmap.yml"
-      # End AppMap CI language agent installation
 
       - name: Maven Test
         run: ./mvnw test
@@ -55,6 +46,14 @@ jobs:
         with:
           path: ${{ steps.install-appmap.outputs.appmap-dir }}
           key: appmaps-${{ github.sha }}-${{ github.run_attempt }}
+          
+      # Begin AppMap bootstrap archive step
+      - name: Archive AppMaps
+        id: appmap-bootstrap-archive-appmaps
+        uses: getappmap/archive-action@v1
+        with:
+          revision: ${{ github.event.pull_request.base.sha }}
+      # End AppMap bootstrap archive step
   
   appmap-analysis:
     if: always()
